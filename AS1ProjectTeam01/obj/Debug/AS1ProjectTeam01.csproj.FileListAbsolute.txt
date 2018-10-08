@@ -8,3 +8,13 @@ C:\Users\User\OneDrive - Douglas College\CSIS3540 - Client Server Systems\AS1Pro
 C:\Users\User\OneDrive - Douglas College\CSIS3540 - Client Server Systems\AS1ProjectTeam01\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.CoreCompileInputs.cache
 C:\Users\User\OneDrive - Douglas College\CSIS3540 - Client Server Systems\AS1ProjectTeam01\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.exe
 C:\Users\User\OneDrive - Douglas College\CSIS3540 - Client Server Systems\AS1ProjectTeam01\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.pdb
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.exe.config
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.exe
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.pdb
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csprojResolveAssemblyReference.cache
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.CarListingsForm.resources
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.Properties.Resources.resources
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.GenerateResource.Cache
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.CoreCompileInputs.cache
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.exe
+C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.pdb
