@@ -18,3 +18,13 @@ C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001
 C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.CoreCompileInputs.cache
 C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.exe
 C:\Users\Alecn\OneDrive - Douglas College\School学校\第四学期\CSIS3540_001\Assignments\assignment1\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.pdb
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.exe.config
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.exe
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\bin\Debug\AS1ProjectTeam01.pdb
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csprojResolveAssemblyReference.cache
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.CarListingsForm.resources
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.Properties.Resources.resources
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.GenerateResource.Cache
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.csproj.CoreCompileInputs.cache
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.exe
+E:\GitHub\CSIS3540-Assignment-1\AS1ProjectTeam01\obj\Debug\AS1ProjectTeam01.pdb

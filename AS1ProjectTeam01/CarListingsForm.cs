@@ -26,6 +26,7 @@ namespace AS1ProjectTeam01
         List<string> selectColorList = new List<string>();
         List<string> selectDealerList = new List<string>();
         IEnumerable<Car> query = null;
+
         private List<Car> listCars;
         // private int newSortColumn;
         // private ListSortDirection newColumnDirection = ListSortDirection.Ascending;
@@ -104,7 +105,7 @@ namespace AS1ProjectTeam01
         public void populateLowerTable()
         {
             // Query all selected options
-            IEnumerable<Car> selectedCars = listCars.Where(car => (
+            query = listCars.Where(car => (
             selectYearList.Contains(car.Year.ToString())) 
             && (selectColorList.Contains(car.Color)) 
             && (selectDealerList.Contains(car.Dealer)) 
@@ -112,29 +113,37 @@ namespace AS1ProjectTeam01
             );
             // Query price if checked
             if (searchPrice.Checked) {
-                if (TxtBoxEmptyHandler(txtMaxPrice) && TxtBoxEmptyHandler(txtMinPrice))
-                    selectedCars = selectedCars.Where(car => 
-                        (decimal)car.Price <= decimal.Parse(txtMaxPrice.Text)
-                        && (decimal)car.Price >= decimal.Parse(txtMinPrice.Text)             
-                    );
+                if (TxtBoxValidation(searchPrice, txtMinPrice,txtMaxPrice ))
+                {
+                    query = query.Where(car =>
+                      (decimal)car.Price <= decimal.Parse(txtMaxPrice.Text)
+                      && (decimal)car.Price >= decimal.Parse(txtMinPrice.Text)
+                  );
+                }
+                
+                  
             }
+
             // Query Engine size if checked
             if (searchEngineSize.Checked) {
-                if (TxtBoxEmptyHandler(txtMaxEngineSize) && TxtBoxEmptyHandler(txtMinEngineSize))
-                        selectedCars = selectedCars.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
-                        && (decimal)car.EngineSize >= decimal.Parse(txtMinEngineSize.Text)
-                    );
+                if (TxtBoxValidation(searchEngineSize, txtMinEngineSize,txtMaxEngineSize))
+                {
+                    query = query.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
+                      && (decimal)car.EngineSize >= decimal.Parse(txtMinEngineSize.Text)
+                  );
+                }
+              
             }
-
+           
             // Display to DataGridView
-            ConvertListToDataGridView(selectedCars.ToList(), dataSelectedCars);
+            ConvertListToDataGridView(query.ToList(), dataSelectedCars);
 
             // Update Label
-            var count = selectedCars.Count();
+            var count = query.Count();
             // Switch to LAMBDA
-            if (selectedCars.Count() > 0)
+            if (query.Count() > 0)
             {
-                var average = selectedCars.Select(car => car.Price).Average();
+                var average = query.Select(car => car.Price).Average();
                 labelAverage.Text = average.ToString("C2");
             }
             else
@@ -235,11 +244,50 @@ namespace AS1ProjectTeam01
             populateLowerTable();
         }
 
-        public Boolean TxtBoxEmptyHandler(TextBox box)
+      
+
+        //print error message for textbox input
+        public bool errorForTxtBox(CheckBox checkbox, string input = "")
         {
-            if (box.Text == "") return false;
-            return true;
+            string print;
+            if(input == "minmax")
+            {
+                print = "minimum value should be smaller than maximum value";
+            }
+            else
+            {
+                print = "Price is missing or is not a number";
+            }
+            MessageBox.Show(print);
+            checkbox.Checked = false;
+            return false;
         }
+
+        //handling textboxes
+        public bool TxtBoxValidation(CheckBox checkbox ,TextBox minTxt, TextBox maxTxt)
+        {
+            
+            try
+            {
+                decimal min = decimal.Parse(minTxt.Text);
+                decimal max = decimal.Parse(maxTxt.Text);
+                if (min > max)
+                {
+                    return errorForTxtBox(checkbox, "minmax");
+                }
+            }
+            catch (Exception e)
+            {
+                return errorForTxtBox(checkbox);
+            }
+            
+
+            return true;
+            
+        }
+
+
+
         public DataGridViewTextBoxColumn[] GetListColumns()
         {
             DataGridViewTextBoxColumn[] arrayDgc = new DataGridViewTextBoxColumn[6];
