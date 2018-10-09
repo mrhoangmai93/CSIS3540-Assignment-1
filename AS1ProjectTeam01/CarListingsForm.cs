@@ -25,29 +25,19 @@ namespace AS1ProjectTeam01
         List<string> selectMakeList = new List<string>();
         List<string> selectColorList = new List<string>();
         List<string> selectDealerList = new List<string>();
-
         IEnumerable<Car> query = null;
         private List<Car> listCars;
-        private int newSortColumn;
-        private ListSortDirection newColumnDirection = ListSortDirection.Ascending;
+        // private int newSortColumn;
+        // private ListSortDirection newColumnDirection = ListSortDirection.Ascending;
         public CarListingsForm()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                InitialDirectory = Path.GetFullPath(Application.StartupPath + "\\..\\.."),
-            };
             InitializeComponent();
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                // Initilize and setup form
-                InitLoad(openFileDialog.FileName);
-                // Bring the form back after loaded XML
-                BringToTop();
-            }
-            else
-            {
-                // Quit the app
-            }
+
+            // Initilize and setup form
+            InitLoad();
+
+            // Bring the form back after loaded XML
+            BringToTop();
 
         }
 
@@ -55,162 +45,103 @@ namespace AS1ProjectTeam01
         {
             searchPrice.Checked = false;
             searchEngineSize.Checked = false;
-            txtMaxEngineSize.Text = null;
-            txtMinEngineSize.Text = null;
-            txtMaxPrice.Text = null;
-            txtMinPrice.Text = null;
+            txtMaxEngineSize.Text = "";
+            txtMinEngineSize.Text = "";
+            txtMaxPrice.Text = "";
+            txtMinPrice.Text = "";
         }
 
-        public void Reset(object sender, EventArgs e)
+        private void Reset(object sender, EventArgs e)
         {
             ResetCheckBoxes();
-            query =  LoadListsNDataGrid(listCars);
-            
+            ResetToDefault();
         }
 
 
         //get value of selectedItem from listbox and save them to a list for further use
-        public List<string> UpdateSelectItem(List<string> tempList, ListBox triggeredLists)
+        public List<string> UpdateSelectItem(ListBox triggeredLists)
         {
-            tempList.Clear();
-
+            List<string> tempList = new List<String>();
             for (int i = 0; i < triggeredLists.SelectedItems.Count; i++)
             {
                 string temp = triggeredLists.SelectedItems[i].ToString();
                 tempList.Add(temp);
             }
             return tempList;
-        
         }
 
         //event handler for four listboxes
-        public void FilterTriggered(object sender, EventArgs e)
+        private void FilterTriggered(object sender, EventArgs e)
         {
-
             ListBox triggeredLists = sender as ListBox;
             string name = triggeredLists.Name;
-
             switch (name)
             {
                 case "listYears":
-                    selectYearList = UpdateSelectItem( selectYearList, triggeredLists);
-                    
+                    selectYearList = UpdateSelectItem(triggeredLists);
                     break;
                 case "listColors":
-                    selectColorList= UpdateSelectItem( selectColorList,  triggeredLists);
-                    
+                    selectColorList= UpdateSelectItem(triggeredLists);
                     break;
                 case "listDealers":
-                    selectDealerList = UpdateSelectItem( selectDealerList, triggeredLists);
-                   
+                    selectDealerList = UpdateSelectItem(triggeredLists);
                     break;
                 case "listMakes":
-                    selectMakeList = UpdateSelectItem( selectMakeList, triggeredLists);
-                   
+                    selectMakeList = UpdateSelectItem(triggeredLists);
                     break;
-
             }
-
-            query = from cars in listCars
-                        where (selectYearList.Contains(cars.Year.ToString())) &&
-                                (selectColorList.Contains(cars.Color)) &&
-                                (selectDealerList.Contains(cars.Dealer)) &&
-                                (selectMakeList.Contains(cars.Make))
-                        select cars;
-
             populateLowerTable();
-
-
         }
 
-
-
-        public void CheckBoxesFilterHandler(object sender, EventArgs e)
+        private void CheckBoxesFilterHandler(object sender, EventArgs e)
         {
-            //MessageBox.Show("event start");
-            CheckBox checkboxTriggered = sender as CheckBox;
-            string name = checkboxTriggered.Name;
-
-            if(name == "searchPrice")
-            {
-                //MessageBox.Show("search price");
-                if (checkboxTriggered.Checked)
-                {
-                    //MessageBox.Show("price checked");
-                    query = query.Where(car => (decimal)car.Price <= decimal.Parse(txtMaxPrice.Text) 
-                                && (decimal)car.Price >= decimal.Parse(txtMinPrice.Text)
-                                );
-                }
-                else
-                {
-                   // MessageBox.Show("price  NOT checked");
-                    query = from cars in listCars
-                            where (selectYearList.Contains(cars.Year.ToString())) &&
-                                    (selectColorList.Contains(cars.Color)) &&
-                                    (selectDealerList.Contains(cars.Dealer)) &&
-                                    (selectMakeList.Contains(cars.Make))
-                            select cars;
-                }
-            }
-            else
-            {
-                if (checkboxTriggered.Checked)
-                {
-                    query = query.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
-                                && (decimal)car.EngineSize >= decimal.Parse(txtMinEngineSize.Text)
-                                );
-                }
-                else
-                {
-                    query = from cars in listCars
-                            where (selectYearList.Contains(cars.Year.ToString())) &&
-                                    (selectColorList.Contains(cars.Color)) &&
-                                    (selectDealerList.Contains(cars.Dealer)) &&
-                                    (selectMakeList.Contains(cars.Make))
-                            select cars;
-                }
-
-            }
-
             populateLowerTable();
-
         }
-
-
-
-        public void TxtboxFilterHandler(object sender, EventArgs e)
+        private void TxtboxFilterHandler(object sender, EventArgs e)
         {
-            TextBox textboxTriggered = sender as TextBox;
-            string name = textboxTriggered.Name;
-            //MessageBox.Show(name);
-            if(name == "txtMinPrice" || name == "txtMaxPrice")
-            {
-               // MessageBox.Show("Price");
-                if (searchPrice.Checked)
-                {
-                    query = query.Where(car => (decimal)car.Price <= decimal.Parse(txtMaxPrice.Text)
-                               && (decimal)car.Price >= decimal.Parse(txtMinPrice.Text)
-                               );
-                }
-            }
-            else
-            {
-                if (searchEngineSize.Checked)
-                {
-                    query = query.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
-                                && (decimal)car.EngineSize >= decimal.Parse(txtMinEngineSize.Text)
-                                );
-                }
-            }
             populateLowerTable();
-
         }
-
         public void populateLowerTable()
         {
-            SetDataGridView(dataSelectedCars);
-            dataSelectedCars.DataSource = CreateDataTable(query);
-            CalculateSelectedDataList(query);
+            // Query all selected options
+            IEnumerable<Car> selectedCars = listCars.Where(car => (
+            selectYearList.Contains(car.Year.ToString())) 
+            && (selectColorList.Contains(car.Color)) 
+            && (selectDealerList.Contains(car.Dealer)) 
+            && (selectMakeList.Contains(car.Make))
+            );
+            // Query price if checked
+            if (searchPrice.Checked) {
+                if (TxtBoxEmptyHandler(txtMaxPrice) && TxtBoxEmptyHandler(txtMinPrice))
+                    selectedCars = selectedCars.Where(car => 
+                        (decimal)car.Price <= decimal.Parse(txtMaxPrice.Text)
+                        && (decimal)car.Price >= decimal.Parse(txtMinPrice.Text)             
+                    );
+            }
+            // Query Engine size if checked
+            if (searchEngineSize.Checked) {
+                if (TxtBoxEmptyHandler(txtMaxEngineSize) && TxtBoxEmptyHandler(txtMinEngineSize))
+                        selectedCars = selectedCars.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
+                        && (decimal)car.EngineSize >= decimal.Parse(txtMinEngineSize.Text)
+                    );
+            }
+
+            // Display to DataGridView
+            ConvertListToDataGridView(selectedCars.ToList(), dataSelectedCars);
+
+            // Update Label
+            var count = selectedCars.Count();
+            // Switch to LAMBDA
+            if (selectedCars.Count() > 0)
+            {
+                var average = selectedCars.Select(car => car.Price).Average();
+                labelAverage.Text = average.ToString("C2");
+            }
+            else
+            {
+                labelAverage.Text = 0.ToString("C2");
+            }
+            labelCount.Text = count.ToString();
         }
 
 
@@ -218,15 +149,21 @@ namespace AS1ProjectTeam01
         /// <summary>
         /// Get the car listings from an xml file
         /// </summary>
-        public List<Car> GetXmlCarListingsSerialize(string fileName)
+        public List<Car> GetXmlCarListingsSerialize()
         {
             try
             {
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    InitialDirectory = Path.GetFullPath(Application.StartupPath + "\\..\\.."),
+                };
+                if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
                 XmlRootAttribute xRoot = new XmlRootAttribute();
                 xRoot.ElementName = "ArrayOfCar";
                 xRoot.IsNullable = true;
                 XmlSerializer xmlFormat = new XmlSerializer(typeof(List<Car>), xRoot);
-                StreamReader carsFile = new StreamReader(fileName);
+                StreamReader carsFile = new StreamReader(openFileDialog.FileName);
                 listCars = xmlFormat.Deserialize(carsFile) as List<Car>;
 
                 // Sort all cars by Make, Price, Year and Color
@@ -234,11 +171,20 @@ namespace AS1ProjectTeam01
                                 orderby car.Make, car.Price, car.Year, car.Color
                              select car;
                 listCars = carsSorted.ToList();
-                
+                carsFile.Close();
+                }
+                else
+                {
+                    // Quit the app
+                    System.Environment.Exit(1);
+
+                }
             }
             catch (System.IO.FileNotFoundException ex)
             {
                 MessageBox.Show(ex.Message);
+                // Quit the app
+                System.Environment.Exit(1);
             }
             return listCars;
         }
@@ -260,10 +206,58 @@ namespace AS1ProjectTeam01
         
 
 
-        public IEnumerable<Car> LoadListsNDataGrid(List<Car> listCars)
+        public void ResetToDefault()
         {
-            
-           
+            // Unregistered listbox SelectedIndexChanged event
+            listYears.SelectedIndexChanged -= FilterTriggered;
+            listColors.SelectedIndexChanged -= FilterTriggered;
+            listMakes.SelectedIndexChanged -= FilterTriggered;
+            listDealers.SelectedIndexChanged -= FilterTriggered;
+
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listMakes);
+            selectMakeList = UpdateSelectItem(listMakes);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listColors);
+            selectColorList = UpdateSelectItem(listColors);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listYears);
+            selectYearList = UpdateSelectItem(listYears);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listDealers);
+            selectDealerList = UpdateSelectItem(listDealers);
+
+            // register listbox SelectedIndexChanged event
+            listYears.SelectedIndexChanged += FilterTriggered;
+            listColors.SelectedIndexChanged += FilterTriggered;
+            listMakes.SelectedIndexChanged += FilterTriggered;
+            listDealers.SelectedIndexChanged += FilterTriggered;
+            populateLowerTable();
+        }
+
+        public Boolean TxtBoxEmptyHandler(TextBox box)
+        {
+            if (box.Text == "") return false;
+            return true;
+        }
+        public DataGridViewTextBoxColumn[] GetListColumns()
+        {
+            DataGridViewTextBoxColumn[] arrayDgc = new DataGridViewTextBoxColumn[6];
+            arrayDgc[0] = GetDataGrid("Make");
+            arrayDgc[1] = GetDataGrid("Year");
+            arrayDgc[2] = GetDataGrid("Color");
+            arrayDgc[3] = GetDataGrid("Engine Size");
+            arrayDgc[4] = GetDataGrid("Price");
+            arrayDgc[5] = GetDataGrid("Dealer");
+            return arrayDgc;
+        }
+        public void InitLoad()
+        {
+            listCars = GetXmlCarListingsSerialize();
+
+
+            // query = LoadListsNDataGrid();
+            // ResetCheckBoxes();
 
             // Setting up and format UI
             SetDataGridView(dataAllCars);
@@ -274,80 +268,53 @@ namespace AS1ProjectTeam01
             listMakes.SelectionMode = SelectionMode.MultiExtended;
             listDealers.SelectionMode = SelectionMode.MultiExtended;
 
-            dataAllCars.DataSource = CreateDataTable(listCars);
-            dataAllCars.Columns["Price"].DefaultCellStyle.Format = "c";
-            dataSelectedCars.DataSource = CreateDataTable(listCars);
-            dataSelectedCars.Columns["Price"].DefaultCellStyle.Format = "c";
+            // Init array of 6 DataGridViewTextBoxColumn and assign column
+            // Add column to DataGridView
+            dataAllCars.Columns.AddRange(GetListColumns());
+            dataSelectedCars.Columns.AddRange(GetListColumns());
+            // Format Price column to currency
+            dataAllCars.Columns[4].DefaultCellStyle.Format = "c";
+            dataSelectedCars.Columns[4].DefaultCellStyle.Format = "c";
+
+            // Display all cars
+            ConvertListToDataGridView(listCars, dataAllCars);
+            // Display selected cars
+            populateLowerTable();
 
             // Query Makes list
             var makesList = listCars.GroupBy(car => car.Make).Select(g => g.First()).Select(c => c.Make.ToString());
+            // Assign data to list box
             listMakes.DataSource = makesList.ToList();
-            // Select all options
-            SetSelectedListBox(listMakes);
             // Query Colors list
             var colorsList = listCars.GroupBy(car => car.Color).Select(g => g.First()).OrderBy(car => car.Color).Select(c => c.Color.ToString());
+            // Assign data to list box
             listColors.DataSource = colorsList.ToList();
-            // Select all options
-            SetSelectedListBox(listColors);
             // Query Years list
             var yearsList = listCars.GroupBy(car => car.Year).Select(g => g.First()).OrderBy(c => c.Year).Select(c => c.Year.ToString());
-
-
+            // Assign data to list box
             listYears.DataSource = yearsList.ToList();
-            // Select all options
-            SetSelectedListBox(listYears);
             // Query Dealers list
             var dealersList = listCars.GroupBy(car => car.Dealer).Select(g => g.First()).OrderBy(car => car.Dealer).Select(c => c.Dealer.ToString());
+            // Assign data to list box
             listDealers.DataSource = dealersList.ToList();
-            // Select all options
-            SetSelectedListBox(listDealers);
 
-
+            // Set default
+            ResetToDefault();
             // Calculate all Cars
             var count = listCars.Count();
-            var average = (from car in listCars select car.Price).Average();
+            var average = listCars.Select(car => car.Price).Average();
             // Append string to labels
             lblCountAll.Text = count.ToString();
             lblAveragePriceAll.Text = Convert.ToDecimal(average).ToString("C");
 
-            selectColorList = colorsList.ToList();
-            selectDealerList = dealersList.ToList();
-            selectMakeList = makesList.ToList();
-            selectYearList = yearsList.ToList();
-
-            IEnumerable<Car> query = from cars in listCars
-                                     select cars;
-            //Calculate selected Cars
-            orgCalculatedResult();
-            return query;
-        }
-
-
-
-        public void InitLoad(string fileName)
-        {
-            listCars = GetXmlCarListingsSerialize(fileName);
-         
-
-            query = LoadListsNDataGrid(listCars);
-            ResetCheckBoxes();
-            listYears.SelectedIndexChanged += new System.EventHandler(FilterTriggered);
-            listColors.SelectedIndexChanged += new System.EventHandler(FilterTriggered);
-            listMakes.SelectedIndexChanged += new System.EventHandler(FilterTriggered);
-            listDealers.SelectedIndexChanged += new System.EventHandler(FilterTriggered);
-
-            resetButton.Click += new System.EventHandler(Reset);
-
-            searchEngineSize.CheckedChanged += new System.EventHandler(CheckBoxesFilterHandler);
-            searchPrice.CheckedChanged += new System.EventHandler(CheckBoxesFilterHandler);
-
-            txtMinPrice.TextChanged += new System.EventHandler(TxtboxFilterHandler);
-            txtMaxPrice.TextChanged += new System.EventHandler(TxtboxFilterHandler);
-
-            txtMinEngineSize.TextChanged += new System.EventHandler(TxtboxFilterHandler);
-            txtMaxEngineSize.TextChanged += new System.EventHandler(TxtboxFilterHandler);
-
-
+            // Assign event handler
+            resetButton.Click += Reset;
+            searchEngineSize.CheckedChanged += CheckBoxesFilterHandler;
+            searchPrice.CheckedChanged += CheckBoxesFilterHandler;
+            txtMinPrice.TextChanged += TxtboxFilterHandler;
+            txtMaxPrice.TextChanged += TxtboxFilterHandler;
+            txtMinEngineSize.TextChanged += TxtboxFilterHandler;
+            txtMaxEngineSize.TextChanged += TxtboxFilterHandler;
 
         }
 
@@ -374,53 +341,31 @@ namespace AS1ProjectTeam01
                 list.SetSelected(i, true);
             }
         }
-
-        public void orgCalculatedResult()
+        /// <summary>
+        /// Init new DataGridViewTextBoxColumn and set headerText
+        /// </summary>
+        /// <returns>
+        /// DataGridViewTextBoxColumn
+        /// </returns>
+        private DataGridViewTextBoxColumn GetDataGrid(string headerText)
         {
-            var count = listCars.Count();
-            var average = (from car in listCars select car.Price).Average();
-
-            labelCount.Text = count.ToString();
-            labelAverage.Text = average.ToString("C2");
+            DataGridViewTextBoxColumn temp = new DataGridViewTextBoxColumn();
+            temp.HeaderText = headerText;
+            return temp;
         }
-
-        public void CalculateSelectedDataList(IEnumerable<Car> inputSelection)
+        /// <summary>
+        /// Update data of DataListView
+        /// </summary>
+        private void ConvertListToDataGridView(List<Car> list, DataGridView dataGridView)
         {
-            var count = inputSelection.Count();
-            var average = (from car in inputSelection select car.Price).Average();
-            //System.InvalidOperationException: 'Sequence contains no elements'
-            //exception to do
+            // Clear current data
+            dataGridView.Rows.Clear();
 
-
-            labelCount.Text = count.ToString();
-            labelAverage.Text = average.ToString("C2");
-        }
-
-        // Convert list<Car> to Datatable for sorting column header
-        // Reference: https://stackoverflow.com/questions/18746064/using-reflection-to-create-a-datatable-from-a-class
-        public static DataTable CreateDataTable<T>(IEnumerable<T> list)
-        {
-            Type type = typeof(T);
-            var properties = type.GetProperties();
-
-            DataTable dataTable = new DataTable();
-            foreach (PropertyInfo info in properties)
+            // Loop through the list and append to row
+            foreach (Car car in list)
             {
-                dataTable.Columns.Add(new DataColumn(info.Name, Nullable.GetUnderlyingType(info.PropertyType) ?? info.PropertyType));
+                dataGridView.Rows.Add(car.Make, car.Year, car.Color, car.EngineSize, car.Price, car.Dealer);
             }
-
-            foreach (T entity in list)
-            {
-                object[] values = new object[properties.Length];
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    values[i] = properties[i].GetValue(entity);
-                }
-
-                dataTable.Rows.Add(values);
-            }
-
-            return dataTable;
         }
     }
 }
