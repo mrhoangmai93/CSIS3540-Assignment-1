@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace AS1ProjectTeam01
@@ -42,6 +36,12 @@ namespace AS1ProjectTeam01
 
         }
 
+        private void Reset(object sender, EventArgs e)
+        {
+            ResetCheckBoxes();
+            ResetToDefault();
+        }
+
         public void ResetCheckBoxes()
         {
             searchPrice.Checked = false;
@@ -52,12 +52,76 @@ namespace AS1ProjectTeam01
             txtMinPrice.Text = "";
         }
 
-        private void Reset(object sender, EventArgs e)
+       
+        public void ResetToDefault()
         {
-            ResetCheckBoxes();
-            ResetToDefault();
+            // Unregistered listbox SelectedIndexChanged event
+            listYears.SelectedIndexChanged -= FilterHandler;
+            listColors.SelectedIndexChanged -= FilterHandler;
+            listMakes.SelectedIndexChanged -= FilterHandler;
+            listDealers.SelectedIndexChanged -= FilterHandler;
+
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listMakes);
+            selectMakeList = UpdateSelectItem(listMakes);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listColors);
+            selectColorList = UpdateSelectItem(listColors);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listYears);
+            selectYearList = UpdateSelectItem(listYears);
+            // Select all options AND reassign local variable
+            SetSelectedListBox(listDealers);
+            selectDealerList = UpdateSelectItem(listDealers);
+
+            // register listbox SelectedIndexChanged event
+            listYears.SelectedIndexChanged += FilterHandler;
+            listColors.SelectedIndexChanged += FilterHandler;
+            listMakes.SelectedIndexChanged += FilterHandler;
+            listDealers.SelectedIndexChanged += FilterHandler;
+            populateLowerTable();
         }
 
+
+        public void SetSelectedListBox(ListBox list)
+        {
+            for (int i = 0; i < list.Items.Count; i++)
+            {
+                list.SetSelected(i, true);
+            }
+        }
+
+        
+       
+
+        //event handler for four listboxes
+        private void FilterHandler(object sender, EventArgs e)
+        {
+            ListBox triggeredLists = sender as ListBox;
+            
+            if(triggeredLists != null)
+            {
+                string name = triggeredLists.Name;
+                switch (name)
+                {
+                    case "listYears":
+                        selectYearList = UpdateSelectItem(triggeredLists);
+                        break;
+                    case "listColors":
+                        selectColorList = UpdateSelectItem(triggeredLists);
+                        break;
+                    case "listDealers":
+                        selectDealerList = UpdateSelectItem(triggeredLists);
+                        break;
+                    case "listMakes":
+                        selectMakeList = UpdateSelectItem(triggeredLists);
+                        break;
+
+                }
+            }
+           
+            populateLowerTable();
+        }
 
         //get value of selectedItem from listbox and save them to a list for further use
         public List<string> UpdateSelectItem(ListBox triggeredLists)
@@ -70,38 +134,7 @@ namespace AS1ProjectTeam01
             }
             return tempList;
         }
-
-        //event handler for four listboxes
-        private void FilterTriggered(object sender, EventArgs e)
-        {
-            ListBox triggeredLists = sender as ListBox;
-            string name = triggeredLists.Name;
-            switch (name)
-            {
-                case "listYears":
-                    selectYearList = UpdateSelectItem(triggeredLists);
-                    break;
-                case "listColors":
-                    selectColorList= UpdateSelectItem(triggeredLists);
-                    break;
-                case "listDealers":
-                    selectDealerList = UpdateSelectItem(triggeredLists);
-                    break;
-                case "listMakes":
-                    selectMakeList = UpdateSelectItem(triggeredLists);
-                    break;
-            }
-            populateLowerTable();
-        }
-
-        private void CheckBoxesFilterHandler(object sender, EventArgs e)
-        {
-            populateLowerTable();
-        }
-        private void TxtboxFilterHandler(object sender, EventArgs e)
-        {
-            populateLowerTable();
-        }
+        
         public void populateLowerTable()
         {
             // Query all selected options
@@ -151,6 +184,45 @@ namespace AS1ProjectTeam01
                 labelAverage.Text = 0.ToString("C2");
             }
             labelCount.Text = count.ToString();
+        }
+
+        public bool TxtBoxValidation(CheckBox checkbox, TextBox minTxt, TextBox maxTxt)
+        {
+
+            try
+            {
+                decimal min = decimal.Parse(minTxt.Text);
+                decimal max = decimal.Parse(maxTxt.Text);
+                if (min > max)
+                {
+                    return errorForTxtBox(checkbox, "minmax");
+                }
+            }
+            catch (Exception e)
+            {
+                return errorForTxtBox(checkbox);
+            }
+
+
+            return true;
+
+        }
+
+        //print error message for textbox input
+        public bool errorForTxtBox(CheckBox checkbox, string input = "")
+        {
+            string print;
+            if (input == "minmax")
+            {
+                print = "minimum value should be smaller than maximum value";
+            }
+            else
+            {
+                print = "Price is missing or is not a number";
+            }
+            MessageBox.Show(print);
+            checkbox.Checked = false;
+            return false;
         }
 
 
@@ -215,78 +287,6 @@ namespace AS1ProjectTeam01
         
 
 
-        public void ResetToDefault()
-        {
-            // Unregistered listbox SelectedIndexChanged event
-            listYears.SelectedIndexChanged -= FilterTriggered;
-            listColors.SelectedIndexChanged -= FilterTriggered;
-            listMakes.SelectedIndexChanged -= FilterTriggered;
-            listDealers.SelectedIndexChanged -= FilterTriggered;
-
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listMakes);
-            selectMakeList = UpdateSelectItem(listMakes);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listColors);
-            selectColorList = UpdateSelectItem(listColors);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listYears);
-            selectYearList = UpdateSelectItem(listYears);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listDealers);
-            selectDealerList = UpdateSelectItem(listDealers);
-
-            // register listbox SelectedIndexChanged event
-            listYears.SelectedIndexChanged += FilterTriggered;
-            listColors.SelectedIndexChanged += FilterTriggered;
-            listMakes.SelectedIndexChanged += FilterTriggered;
-            listDealers.SelectedIndexChanged += FilterTriggered;
-            populateLowerTable();
-        }
-
-      
-
-        //print error message for textbox input
-        public bool errorForTxtBox(CheckBox checkbox, string input = "")
-        {
-            string print;
-            if(input == "minmax")
-            {
-                print = "minimum value should be smaller than maximum value";
-            }
-            else
-            {
-                print = "Price is missing or is not a number";
-            }
-            MessageBox.Show(print);
-            checkbox.Checked = false;
-            return false;
-        }
-
-        //handling textboxes
-        public bool TxtBoxValidation(CheckBox checkbox ,TextBox minTxt, TextBox maxTxt)
-        {
-            
-            try
-            {
-                decimal min = decimal.Parse(minTxt.Text);
-                decimal max = decimal.Parse(maxTxt.Text);
-                if (min > max)
-                {
-                    return errorForTxtBox(checkbox, "minmax");
-                }
-            }
-            catch (Exception e)
-            {
-                return errorForTxtBox(checkbox);
-            }
-            
-
-            return true;
-            
-        }
-
-
 
         public DataGridViewTextBoxColumn[] GetListColumns()
         {
@@ -330,19 +330,34 @@ namespace AS1ProjectTeam01
             populateLowerTable();
 
             // Query Makes list
-            var makesList = listCars.GroupBy(car => car.Make).Select(g => g.First()).Select(c => c.Make.ToString());
+            var makesList = listCars
+                .GroupBy(car => car.Make)
+                .Select(g => g.First())
+                .Select(c => c.Make.ToString());
             // Assign data to list box
             listMakes.DataSource = makesList.ToList();
             // Query Colors list
-            var colorsList = listCars.GroupBy(car => car.Color).Select(g => g.First()).OrderBy(car => car.Color).Select(c => c.Color.ToString());
+            var colorsList = listCars
+                .GroupBy(car => car.Color)
+                .Select(g => g.First())
+                .OrderBy(car => car.Color)
+                .Select(c => c.Color.ToString());
             // Assign data to list box
             listColors.DataSource = colorsList.ToList();
             // Query Years list
-            var yearsList = listCars.GroupBy(car => car.Year).Select(g => g.First()).OrderBy(c => c.Year).Select(c => c.Year.ToString());
+            var yearsList = listCars
+                .GroupBy(car => car.Year)
+                .Select(g => g.First())
+                .OrderBy(c => c.Year)
+                .Select(c => c.Year.ToString());
             // Assign data to list box
             listYears.DataSource = yearsList.ToList();
             // Query Dealers list
-            var dealersList = listCars.GroupBy(car => car.Dealer).Select(g => g.First()).OrderBy(car => car.Dealer).Select(c => c.Dealer.ToString());
+            var dealersList = listCars
+                .GroupBy(car => car.Dealer)
+                .Select(g => g.First())
+                .OrderBy(car => car.Dealer)
+                .Select(c => c.Dealer.ToString());
             // Assign data to list box
             listDealers.DataSource = dealersList.ToList();
 
@@ -357,12 +372,12 @@ namespace AS1ProjectTeam01
 
             // Assign event handler
             resetButton.Click += Reset;
-            searchEngineSize.CheckedChanged += CheckBoxesFilterHandler;
-            searchPrice.CheckedChanged += CheckBoxesFilterHandler;
-            txtMinPrice.TextChanged += TxtboxFilterHandler;
-            txtMaxPrice.TextChanged += TxtboxFilterHandler;
-            txtMinEngineSize.TextChanged += TxtboxFilterHandler;
-            txtMaxEngineSize.TextChanged += TxtboxFilterHandler;
+            searchEngineSize.CheckedChanged += FilterHandler;
+            searchPrice.CheckedChanged += FilterHandler;
+            txtMinPrice.TextChanged += FilterHandler;
+            txtMaxPrice.TextChanged += FilterHandler;
+            txtMinEngineSize.TextChanged += FilterHandler;
+            txtMaxEngineSize.TextChanged += FilterHandler;
 
         }
 
@@ -382,13 +397,7 @@ namespace AS1ProjectTeam01
             gridView.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
-        public void SetSelectedListBox(ListBox list)
-        {
-            for (int i = 0; i < list.Items.Count; i++)
-            {
-                list.SetSelected(i, true);
-            }
-        }
+       
         /// <summary>
         /// Init new DataGridViewTextBoxColumn and set headerText
         /// </summary>
@@ -412,7 +421,13 @@ namespace AS1ProjectTeam01
             // Loop through the list and append to row
             foreach (Car car in list)
             {
-                dataGridView.Rows.Add(car.Make, car.Year, car.Color, car.EngineSize, car.Price, car.Dealer);
+                dataGridView.Rows.Add(
+                    car.Make, 
+                    car.Year, 
+                    car.Color, 
+                    car.EngineSize, 
+                    car.Price, 
+                    car.Dealer);
             }
         }
     }
