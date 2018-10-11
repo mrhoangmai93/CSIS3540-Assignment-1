@@ -8,22 +8,18 @@ using System.Xml.Serialization;
 
 namespace AS1ProjectTeam01
 {
-    //public delegate void MyFilterHandler(EventHandler sender);
-
 
     public partial class CarListingsForm : Form
     {
-        //public event MyFilterHandler filterHandler;
-
+        // Init list string to hold list of selections
         List<string> selectYearList = new List<string>();
         List<string> selectMakeList = new List<string>();
         List<string> selectColorList = new List<string>();
         List<string> selectDealerList = new List<string>();
-        IEnumerable<Car> query = null;
 
+        // Init list Car to hold list of all cars
         private List<Car> listCars;
-        // private int newSortColumn;
-        // private ListSortDirection newColumnDirection = ListSortDirection.Ascending;
+
         public CarListingsForm()
         {
             InitializeComponent();
@@ -34,25 +30,19 @@ namespace AS1ProjectTeam01
             // Bring the form back after loaded XML
             BringToTop();
 
+            // Assign event handler
+            resetButton.Click += Reset;
+            searchEngineSize.CheckedChanged += FilterHandler;
+            searchPrice.CheckedChanged += FilterHandler;
+            txtMinPrice.TextChanged += FilterHandler;
+            txtMaxPrice.TextChanged += FilterHandler;
+            txtMinEngineSize.TextChanged += FilterHandler;
+            txtMaxEngineSize.TextChanged += FilterHandler;
         }
 
-        private void Reset(object sender, EventArgs e)
-        {
-            ResetCheckBoxes();
-            ResetToDefault();
-        }
-
-        public void ResetCheckBoxes()
-        {
-            searchPrice.Checked = false;
-            searchEngineSize.Checked = false;
-            txtMaxEngineSize.Text = "";
-            txtMinEngineSize.Text = "";
-            txtMaxPrice.Text = "";
-            txtMinPrice.Text = "";
-        }
-
-       
+        /// <summary>
+        /// Restore all eventHandler and set all listboxes selected
+        /// </summary>
         public void ResetToDefault()
         {
             // Unregistered listbox SelectedIndexChanged event
@@ -83,6 +73,9 @@ namespace AS1ProjectTeam01
         }
 
 
+        /// <summary>
+        /// Update data of DataListView
+        /// </summary>
         public void SetSelectedListBox(ListBox list)
         {
             for (int i = 0; i < list.Items.Count; i++)
@@ -93,8 +86,9 @@ namespace AS1ProjectTeam01
 
         
        
-
-        //event handler for four listboxes
+        /// <summary>
+        /// Event handler for four listboxes
+        /// </summary>
         private void FilterHandler(object sender, EventArgs e)
         {
             ListBox triggeredLists = sender as ListBox;
@@ -123,7 +117,9 @@ namespace AS1ProjectTeam01
             populateLowerTable();
         }
 
-        //get value of selectedItem from listbox and save them to a list for further use
+        /// <summary>
+        /// Get value of selectedItem from listbox and save them to a list for further use
+        /// </summary>
         public List<string> UpdateSelectItem(ListBox triggeredLists)
         {
             List<string> tempList = new List<String>();
@@ -134,11 +130,13 @@ namespace AS1ProjectTeam01
             }
             return tempList;
         }
-        
+        /// <summary>
+        /// Filter and display cars based on user decision
+        /// </summary>
         public void populateLowerTable()
         {
             // Query all selected options
-            query = listCars.Where(car => (
+            var query = listCars.Where(car => (
             selectYearList.Contains(car.Year.ToString())) 
             && (selectColorList.Contains(car.Color)) 
             && (selectDealerList.Contains(car.Dealer)) 
@@ -146,6 +144,7 @@ namespace AS1ProjectTeam01
             );
             // Query price if checked
             if (searchPrice.Checked) {
+                // Validate input before process query
                 if (TxtBoxValidation(searchPrice, txtMinPrice,txtMaxPrice ))
                 {
                     query = query.Where(car =>
@@ -159,6 +158,7 @@ namespace AS1ProjectTeam01
 
             // Query Engine size if checked
             if (searchEngineSize.Checked) {
+                // Validate input before process query
                 if (TxtBoxValidation(searchEngineSize, txtMinEngineSize,txtMaxEngineSize))
                 {
                     query = query.Where(car => (decimal)car.EngineSize <= decimal.Parse(txtMaxEngineSize.Text)
@@ -171,9 +171,9 @@ namespace AS1ProjectTeam01
             // Display to DataGridView
             ConvertListToDataGridView(query.ToList(), dataSelectedCars);
 
-            // Update Label
+            // Count selected cars
             var count = query.Count();
-            // Switch to LAMBDA
+            // If count is one or more calculate the average
             if (query.Count() > 0)
             {
                 var average = query.Select(car => car.Price).Average();
@@ -185,10 +185,12 @@ namespace AS1ProjectTeam01
             }
             labelCount.Text = count.ToString();
         }
-
+        /// <summary>
+        /// Validate user input
+        /// </summary>
         public bool TxtBoxValidation(CheckBox checkbox, TextBox minTxt, TextBox maxTxt)
         {
-
+            // try parse string to decimal
             try
             {
                 decimal min = decimal.Parse(minTxt.Text);
@@ -207,8 +209,9 @@ namespace AS1ProjectTeam01
             return true;
 
         }
-
-        //print error message for textbox input
+        /// <summary>
+        /// Print error message for textbox input
+        /// </summary>
         public bool errorForTxtBox(CheckBox checkbox, string input = "")
         {
             string print;
@@ -232,27 +235,33 @@ namespace AS1ProjectTeam01
         /// </summary>
         public List<Car> GetXmlCarListingsSerialize()
         {
+            // Try open file dialog and get file name
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
                     InitialDirectory = Path.GetFullPath(Application.StartupPath + "\\..\\.."),
                 };
+                // If user click OK, perform file load
                 if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                XmlRootAttribute xRoot = new XmlRootAttribute();
-                xRoot.ElementName = "ArrayOfCar";
-                xRoot.IsNullable = true;
-                XmlSerializer xmlFormat = new XmlSerializer(typeof(List<Car>), xRoot);
-                StreamReader carsFile = new StreamReader(openFileDialog.FileName);
-                listCars = xmlFormat.Deserialize(carsFile) as List<Car>;
+                    // Define doc root of the XML
+                    XmlRootAttribute xRoot = new XmlRootAttribute();
+                    xRoot.ElementName = "ArrayOfCar";
+                    xRoot.IsNullable = true;
+                    // Init serializer
+                    XmlSerializer xmlFormat = new XmlSerializer(typeof(List<Car>), xRoot);
+                    // Init file reader and open the file
+                    StreamReader carsFile = new StreamReader(openFileDialog.FileName);
+                    // Deserialize xml file into list
+                    listCars = xmlFormat.Deserialize(carsFile) as List<Car>;
 
-                // Sort all cars by Make, Price, Year and Color
-                var carsSorted = from car in listCars
-                                orderby car.Make, car.Price, car.Year, car.Color
-                             select car;
-                listCars = carsSorted.ToList();
-                carsFile.Close();
+                    // Sort all cars by Make, Price, Year and Color
+                    var carsSorted = from car in listCars
+                                    orderby car.Make, car.Price, car.Year, car.Color
+                                 select car;
+                    listCars = carsSorted.ToList();
+                    carsFile.Close();
                 }
                 else
                 {
@@ -271,6 +280,9 @@ namespace AS1ProjectTeam01
         }
         #endregion
         #region Bring form to top
+        /// <summary>
+        /// Bring the form back to top
+        /// </summary>
         public void BringToTop()
         {
             // Show the current form
@@ -286,8 +298,31 @@ namespace AS1ProjectTeam01
 
         
 
-
-
+        /// <summary>
+        /// Reset to default state
+        /// </summary>
+        private void Reset(object sender, EventArgs e)
+        {
+            ResetCheckBoxes();
+            ResetToDefault();
+        }
+        /// <summary>
+        /// Reset all checkboxes and textboxes
+        /// </summary>
+        public void ResetCheckBoxes()
+        {
+            // Set search checkbox to false
+            searchPrice.Checked = false;
+            searchEngineSize.Checked = false;
+            // Set textbox to empty
+            txtMaxEngineSize.Text = "";
+            txtMinEngineSize.Text = "";
+            txtMaxPrice.Text = "";
+            txtMinPrice.Text = "";
+        }
+        /// <summary>
+        // Init list of columns 
+        /// </summary>
         public DataGridViewTextBoxColumn[] GetListColumns()
         {
             DataGridViewTextBoxColumn[] arrayDgc = new DataGridViewTextBoxColumn[6];
@@ -299,13 +334,13 @@ namespace AS1ProjectTeam01
             arrayDgc[5] = GetDataGrid("Dealer");
             return arrayDgc;
         }
+        /// <summary>
+        // Wrapper method for all the initial load
+        /// </summary>
         public void InitLoad()
         {
+            // Load XML file into a list
             listCars = GetXmlCarListingsSerialize();
-
-
-            // query = LoadListsNDataGrid();
-            // ResetCheckBoxes();
 
             // Setting up and format UI
             SetDataGridView(dataAllCars);
@@ -331,33 +366,22 @@ namespace AS1ProjectTeam01
 
             // Query Makes list
             var makesList = listCars
-                .GroupBy(car => car.Make)
-                .Select(g => g.First())
-                .Select(c => c.Make.ToString());
+                .Select(car => car.Make).Distinct();
             // Assign data to list box
             listMakes.DataSource = makesList.ToList();
             // Query Colors list
             var colorsList = listCars
-                .GroupBy(car => car.Color)
-                .Select(g => g.First())
-                .OrderBy(car => car.Color)
-                .Select(c => c.Color.ToString());
+                .Select(car => car.Color).Distinct();
             // Assign data to list box
             listColors.DataSource = colorsList.ToList();
             // Query Years list
             var yearsList = listCars
-                .GroupBy(car => car.Year)
-                .Select(g => g.First())
-                .OrderBy(c => c.Year)
-                .Select(c => c.Year.ToString());
+                .Select(car => car.Year).Distinct();
             // Assign data to list box
             listYears.DataSource = yearsList.ToList();
             // Query Dealers list
             var dealersList = listCars
-                .GroupBy(car => car.Dealer)
-                .Select(g => g.First())
-                .OrderBy(car => car.Dealer)
-                .Select(c => c.Dealer.ToString());
+                .Select(car => car.Dealer).Distinct();
             // Assign data to list box
             listDealers.DataSource = dealersList.ToList();
 
@@ -370,18 +394,11 @@ namespace AS1ProjectTeam01
             lblCountAll.Text = count.ToString();
             lblAveragePriceAll.Text = Convert.ToDecimal(average).ToString("C");
 
-            // Assign event handler
-            resetButton.Click += Reset;
-            searchEngineSize.CheckedChanged += FilterHandler;
-            searchPrice.CheckedChanged += FilterHandler;
-            txtMinPrice.TextChanged += FilterHandler;
-            txtMaxPrice.TextChanged += FilterHandler;
-            txtMinEngineSize.TextChanged += FilterHandler;
-            txtMaxEngineSize.TextChanged += FilterHandler;
-
         }
 
-
+        /// <summary>
+        /// Multile settings for datagridview
+        /// </summary>
         public void SetDataGridView(DataGridView gridView)
         {
             gridView.Columns.Clear(); // any columns created by the designer, get rid of them
