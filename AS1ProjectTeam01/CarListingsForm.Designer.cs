@@ -36,14 +36,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.resetButton = new System.Windows.Forms.Button();
-            this.listMakes = new System.Windows.Forms.ListBox();
+            this.makesListBox = new System.Windows.Forms.ListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.listYears = new System.Windows.Forms.ListBox();
+            this.yearsListBox = new System.Windows.Forms.ListBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.listColors = new System.Windows.Forms.ListBox();
+            this.colorsListBox = new System.Windows.Forms.ListBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.listDealers = new System.Windows.Forms.ListBox();
+            this.dealersListBox = new System.Windows.Forms.ListBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -142,12 +142,12 @@
             // 
             // listMakes
             // 
-            this.listMakes.FormattingEnabled = true;
-            this.listMakes.ItemHeight = 16;
-            this.listMakes.Location = new System.Drawing.Point(15, 303);
-            this.listMakes.Name = "listMakes";
-            this.listMakes.Size = new System.Drawing.Size(151, 132);
-            this.listMakes.TabIndex = 8;
+            this.makesListBox.FormattingEnabled = true;
+            this.makesListBox.ItemHeight = 16;
+            this.makesListBox.Location = new System.Drawing.Point(15, 303);
+            this.makesListBox.Name = "listMakes";
+            this.makesListBox.Size = new System.Drawing.Size(151, 132);
+            this.makesListBox.TabIndex = 8;
             // 
             // label5
             // 
@@ -169,12 +169,12 @@
             // 
             // listYears
             // 
-            this.listYears.FormattingEnabled = true;
-            this.listYears.ItemHeight = 16;
-            this.listYears.Location = new System.Drawing.Point(234, 303);
-            this.listYears.Name = "listYears";
-            this.listYears.Size = new System.Drawing.Size(76, 132);
-            this.listYears.TabIndex = 10;
+            this.yearsListBox.FormattingEnabled = true;
+            this.yearsListBox.ItemHeight = 16;
+            this.yearsListBox.Location = new System.Drawing.Point(234, 303);
+            this.yearsListBox.Name = "listYears";
+            this.yearsListBox.Size = new System.Drawing.Size(76, 132);
+            this.yearsListBox.TabIndex = 10;
             // 
             // label7
             // 
@@ -187,12 +187,12 @@
             // 
             // listColors
             // 
-            this.listColors.FormattingEnabled = true;
-            this.listColors.ItemHeight = 16;
-            this.listColors.Location = new System.Drawing.Point(388, 303);
-            this.listColors.Name = "listColors";
-            this.listColors.Size = new System.Drawing.Size(113, 132);
-            this.listColors.TabIndex = 12;
+            this.colorsListBox.FormattingEnabled = true;
+            this.colorsListBox.ItemHeight = 16;
+            this.colorsListBox.Location = new System.Drawing.Point(388, 303);
+            this.colorsListBox.Name = "listColors";
+            this.colorsListBox.Size = new System.Drawing.Size(113, 132);
+            this.colorsListBox.TabIndex = 12;
             // 
             // label8
             // 
@@ -205,12 +205,12 @@
             // 
             // listDealers
             // 
-            this.listDealers.FormattingEnabled = true;
-            this.listDealers.ItemHeight = 16;
-            this.listDealers.Location = new System.Drawing.Point(611, 303);
-            this.listDealers.Name = "listDealers";
-            this.listDealers.Size = new System.Drawing.Size(164, 132);
-            this.listDealers.TabIndex = 14;
+            this.dealersListBox.FormattingEnabled = true;
+            this.dealersListBox.ItemHeight = 16;
+            this.dealersListBox.Location = new System.Drawing.Point(611, 303);
+            this.dealersListBox.Name = "listDealers";
+            this.dealersListBox.Size = new System.Drawing.Size(164, 132);
+            this.dealersListBox.TabIndex = 14;
             // 
             // label9
             // 
@@ -394,13 +394,13 @@
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.listDealers);
+            this.Controls.Add(this.dealersListBox);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.listColors);
+            this.Controls.Add(this.colorsListBox);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.listYears);
+            this.Controls.Add(this.yearsListBox);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.listMakes);
+            this.Controls.Add(this.makesListBox);
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblAveragePriceAll);
@@ -428,14 +428,14 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button resetButton;
-        private System.Windows.Forms.ListBox listMakes;
+        private System.Windows.Forms.ListBox makesListBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ListBox listYears;
+        private System.Windows.Forms.ListBox yearsListBox;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ListBox listColors;
+        private System.Windows.Forms.ListBox colorsListBox;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ListBox listDealers;
+        private System.Windows.Forms.ListBox dealersListBox;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;

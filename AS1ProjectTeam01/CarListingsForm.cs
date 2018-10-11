@@ -12,10 +12,13 @@ namespace AS1ProjectTeam01
     public partial class CarListingsForm : Form
     {
         // Init list string to hold list of selections
-        List<string> selectYearList = new List<string>();
-        List<string> selectMakeList = new List<string>();
-        List<string> selectColorList = new List<string>();
-        List<string> selectDealerList = new List<string>();
+        List<string> selectedYearList = new List<string>();
+        List<string> selectedMakeList = new List<string>();
+        List<string> selectedColorList = new List<string>();
+        List<string> selectedDealerList = new List<string>();
+
+        //global LINQ 
+        IEnumerable<Car> query = null;
 
         // Init list Car to hold list of all cars
         private List<Car> listCars;
@@ -46,29 +49,29 @@ namespace AS1ProjectTeam01
         public void ResetToDefault()
         {
             // Unregistered listbox SelectedIndexChanged event
-            listYears.SelectedIndexChanged -= FilterHandler;
-            listColors.SelectedIndexChanged -= FilterHandler;
-            listMakes.SelectedIndexChanged -= FilterHandler;
-            listDealers.SelectedIndexChanged -= FilterHandler;
+            yearsListBox.SelectedIndexChanged -= FilterHandler;
+            colorsListBox.SelectedIndexChanged -= FilterHandler;
+            makesListBox.SelectedIndexChanged -= FilterHandler;
+            dealersListBox.SelectedIndexChanged -= FilterHandler;
 
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listMakes);
-            selectMakeList = UpdateSelectItem(listMakes);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listColors);
-            selectColorList = UpdateSelectItem(listColors);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listYears);
-            selectYearList = UpdateSelectItem(listYears);
-            // Select all options AND reassign local variable
-            SetSelectedListBox(listDealers);
-            selectDealerList = UpdateSelectItem(listDealers);
+            // Select all options AND update their relative List<string> 
+            SelectAllInListBox(makesListBox);
+            selectedMakeList = UpdateSelectItem(makesListBox);
+            
+            SelectAllInListBox(colorsListBox);
+            selectedColorList = UpdateSelectItem(colorsListBox);
+            
+            SelectAllInListBox(yearsListBox);
+            selectedYearList = UpdateSelectItem(yearsListBox);
+            
+            SelectAllInListBox(dealersListBox);
+            selectedDealerList = UpdateSelectItem(dealersListBox);
 
-            // register listbox SelectedIndexChanged event
-            listYears.SelectedIndexChanged += FilterHandler;
-            listColors.SelectedIndexChanged += FilterHandler;
-            listMakes.SelectedIndexChanged += FilterHandler;
-            listDealers.SelectedIndexChanged += FilterHandler;
+            //// register listbox SelectedIndexChanged event
+            yearsListBox.SelectedIndexChanged += FilterHandler;
+            colorsListBox.SelectedIndexChanged += FilterHandler;
+            makesListBox.SelectedIndexChanged += FilterHandler;
+            dealersListBox.SelectedIndexChanged += FilterHandler;
             populateLowerTable();
         }
 
@@ -76,7 +79,7 @@ namespace AS1ProjectTeam01
         /// <summary>
         /// Update data of DataListView
         /// </summary>
-        public void SetSelectedListBox(ListBox list)
+        public void SelectAllInListBox(ListBox list)
         {
             for (int i = 0; i < list.Items.Count; i++)
             {
@@ -99,16 +102,16 @@ namespace AS1ProjectTeam01
                 switch (name)
                 {
                     case "listYears":
-                        selectYearList = UpdateSelectItem(triggeredLists);
+                        selectedYearList = UpdateSelectItem(triggeredLists);
                         break;
                     case "listColors":
-                        selectColorList = UpdateSelectItem(triggeredLists);
+                        selectedColorList = UpdateSelectItem(triggeredLists);
                         break;
                     case "listDealers":
-                        selectDealerList = UpdateSelectItem(triggeredLists);
+                        selectedDealerList = UpdateSelectItem(triggeredLists);
                         break;
                     case "listMakes":
-                        selectMakeList = UpdateSelectItem(triggeredLists);
+                        selectedMakeList = UpdateSelectItem(triggeredLists);
                         break;
 
                 }
@@ -136,11 +139,11 @@ namespace AS1ProjectTeam01
         public void populateLowerTable()
         {
             // Query all selected options
-            var query = listCars.Where(car => (
-            selectYearList.Contains(car.Year.ToString())) 
-            && (selectColorList.Contains(car.Color)) 
-            && (selectDealerList.Contains(car.Dealer)) 
-            && (selectMakeList.Contains(car.Make))
+            query = listCars.Where(car => (
+            selectedYearList.Contains(car.Year.ToString())) 
+            && (selectedColorList.Contains(car.Color)) 
+            && (selectedDealerList.Contains(car.Dealer)) 
+            && (selectedMakeList.Contains(car.Make))
             );
             // Query price if checked
             if (searchPrice.Checked) {
@@ -346,10 +349,10 @@ namespace AS1ProjectTeam01
             SetDataGridView(dataAllCars);
             SetDataGridView(dataSelectedCars);
 
-            listYears.SelectionMode = SelectionMode.MultiExtended;
-            listColors.SelectionMode = SelectionMode.MultiExtended;
-            listMakes.SelectionMode = SelectionMode.MultiExtended;
-            listDealers.SelectionMode = SelectionMode.MultiExtended;
+            yearsListBox.SelectionMode = SelectionMode.MultiExtended;
+            colorsListBox.SelectionMode = SelectionMode.MultiExtended;
+            makesListBox.SelectionMode = SelectionMode.MultiExtended;
+            dealersListBox.SelectionMode = SelectionMode.MultiExtended;
 
             // Init array of 6 DataGridViewTextBoxColumn and assign column
             // Add column to DataGridView
@@ -366,24 +369,35 @@ namespace AS1ProjectTeam01
 
             // Query Makes list
             var makesList = listCars
-                .Select(car => car.Make).Distinct();
+                .GroupBy(car => car.Make)
+                .Select(g => g.First())
+                .Select(c => c.Make.ToString());
             // Assign data to list box
-            listMakes.DataSource = makesList.ToList();
+            makesListBox.DataSource = makesList.ToList();
             // Query Colors list
             var colorsList = listCars
-                .Select(car => car.Color).Distinct();
+                .GroupBy(car => car.Color)
+                .Select(g => g.First())
+                .OrderBy(car => car.Color)
+                .Select(c => c.Color.ToString());
             // Assign data to list box
-            listColors.DataSource = colorsList.ToList();
+            colorsListBox.DataSource = colorsList.ToList();
             // Query Years list
             var yearsList = listCars
-                .Select(car => car.Year).Distinct();
+                .GroupBy(car => car.Year)
+                .Select(g => g.First())
+                .OrderBy(c => c.Year)
+                .Select(c => c.Year.ToString());
             // Assign data to list box
-            listYears.DataSource = yearsList.ToList();
+            yearsListBox.DataSource = yearsList.ToList();
             // Query Dealers list
             var dealersList = listCars
-                .Select(car => car.Dealer).Distinct();
+                .GroupBy(car => car.Dealer)
+                .Select(g => g.First())
+                .OrderBy(car => car.Dealer)
+                .Select(c => c.Dealer.ToString());
             // Assign data to list box
-            listDealers.DataSource = dealersList.ToList();
+            dealersListBox.DataSource = dealersList.ToList();
 
             // Set default
             ResetToDefault();
